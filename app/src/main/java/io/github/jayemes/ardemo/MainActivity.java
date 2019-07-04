@@ -7,14 +7,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.ar.core.AugmentedImage;
 import com.google.ar.core.Frame;
-import com.google.ar.core.TrackingState;
 import com.google.ar.sceneform.FrameTime;
-import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.ux.ArFragment;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.google.ar.core.TrackingState.STOPPED;
+import static com.google.ar.core.TrackingState.TRACKING;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
 
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
         arFragment.getArSceneView().getScene().addOnUpdateListener(this::onUpdateFrame);
-
     }
 
     private void onUpdateFrame(FrameTime ft) {
@@ -43,7 +43,20 @@ public class MainActivity extends AppCompatActivity {
                 frame.getUpdatedTrackables(AugmentedImage.class);
 
         for (AugmentedImage augmentedImage : updatedAugmentedImages) {
-
+            if (augmentedImage.getTrackingState() == TRACKING) {
+                if (!augmentedImageMap.containsKey(augmentedImage)) {
+                    AugmentedImageNode node = new AugmentedImageNode(this);
+                    node.setImage(augmentedImage);
+                    augmentedImageMap.put(augmentedImage, node);
+                    arFragment.getArSceneView().getScene().addChild(node);
+                    Log.e(TAG, "Added Node");
+                }
+            } else if (augmentedImage.getTrackingState() == STOPPED) {
+                augmentedImageMap.remove(augmentedImage);
+                Log.e(TAG, "Removed Node");
+            } else {
+                Log.e(TAG, "Paused");
+            }
 
         }
 
