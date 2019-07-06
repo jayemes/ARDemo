@@ -21,7 +21,7 @@ import java.io.InputStream;
 
 public class AugmentedImageFragment extends ArFragment {
     private static final String TAG = "AugmentedImageFragment";
-    private static final String DEFAULT_IMAGE_NAME = "default.jpg";
+    private static final String DEFAULT_IMAGE_NAME = "marker.png";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

@@ -2,6 +2,7 @@ package io.github.jayemes.ardemo;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -30,6 +31,10 @@ public class MainActivity extends AppCompatActivity {
 
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
         arFragment.getArSceneView().getScene().addOnUpdateListener(this::onUpdateFrame);
+
+        TextView versionTV = findViewById(R.id.versionTV);
+        versionTV.setText(String.format("AR Demo %s", BuildConfig.VERSION_NAME));
+
     }
 
     private void onUpdateFrame(FrameTime ft) {
