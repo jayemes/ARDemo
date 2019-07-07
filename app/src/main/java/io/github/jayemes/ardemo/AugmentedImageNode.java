@@ -22,18 +22,23 @@ class AugmentedImageNode extends AnchorNode {
 
     private static final String TAG = "AugmentedImageNode";
     private AugmentedImage image;
-    private static CompletableFuture<ModelRenderable> model;
-    private static CompletableFuture<ViewRenderable> menu;
+    private static CompletableFuture<ModelRenderable> tankCF, waterCF;
+    private static CompletableFuture<ViewRenderable> menuCF;
 
-    private Node modelNode;
+    private Node tankNode, waterNode;
 
     AugmentedImageNode(Context context) {
-        if (model == null) {
-            model = ModelRenderable.builder()
-                    .setSource(context, R.raw.tmp)
+        if (tankCF == null) {
+            tankCF = ModelRenderable.builder()
+                    .setSource(context, R.raw.tank)
                     .build();
         }
 
+        if (waterCF == null) {
+            waterCF = ModelRenderable.builder()
+                    .setSource(context, R.raw.water)
+                    .build();
+        }
 
         View menuView = View.inflate(context, R.layout.floating_menu, null);
 
@@ -43,8 +48,8 @@ class AugmentedImageNode extends AnchorNode {
         levelBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                if (modelNode != null) {
-                    modelNode.setLocalScale(new Vector3(.5f, i / 100f, .5f));
+                if (waterNode != null) {
+                    waterNode.setLocalScale(new Vector3(.5f, i / 100f, .5f));
                 }
             }
 
@@ -62,16 +67,14 @@ class AugmentedImageNode extends AnchorNode {
         tempBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                Color newColor = new Color(i/100f, .5f - i/200f, .5f - i / 200f);
+                Color newColor = new Color(i / 100f, .5f - i / 200f, .5f - i / 200f);
 
                 CompletableFuture<Material> materialCompletableFuture =
                         MaterialFactory.makeOpaqueWithColor(context, newColor);
 
                 materialCompletableFuture.thenAccept(material -> {
-                    modelNode.getRenderable().setMaterial(material);
+                    waterNode.getRenderable().setMaterial(material);
                 });
-
-
             }
 
             @Override
@@ -85,9 +88,8 @@ class AugmentedImageNode extends AnchorNode {
             }
         });
 
-
-        if (menu == null) {
-            menu = ViewRenderable.builder()
+        if (menuCF == null) {
+            menuCF = ViewRenderable.builder()
                     .setView(context, menuView)
                     .build();
         }
@@ -96,8 +98,8 @@ class AugmentedImageNode extends AnchorNode {
     void setImage(AugmentedImage image) {
         this.image = image;
 
-        if (!model.isDone() || !menu.isDone()) {
-            CompletableFuture.allOf(model, menu)
+        if (!tankCF.isDone() || !menuCF.isDone() || !waterCF.isDone()) {
+            CompletableFuture.allOf(tankCF, menuCF, waterCF)
                     .thenAccept(aVoid -> setImage(image))
                     .exceptionally(throwable -> {
                         Log.e(TAG, "Exception loading models", throwable);
@@ -108,17 +110,25 @@ class AugmentedImageNode extends AnchorNode {
 
         setAnchor(image.createAnchor(image.getCenterPose()));
 
-        modelNode = new Node();
-        modelNode.setParent(this);
-        modelNode.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
-        modelNode.setLocalPosition(new Vector3(0, 0, 0));
-        modelNode.setRenderable(model.getNow(null));
+        tankNode = new Node();
+        tankNode.setParent(this);
+        tankNode.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
+        tankNode.setLocalPosition(new Vector3(0, 0, 0));
+        tankNode.setLocalRotation(Quaternion.axisAngle(new Vector3(0, 1, 0), 180));
+        tankNode.setRenderable(tankCF.getNow(null));
+
+        waterNode = new Node();
+        waterNode.setParent(this);
+        waterNode.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
+        waterNode.setLocalPosition(new Vector3(0, 0, 0));
+        waterNode.setLocalRotation(Quaternion.axisAngle(new Vector3(0, 1, 0), 180));
+        waterNode.setRenderable(waterCF.getNow(null));
 
         Node menuNode = new Node();
         menuNode.setParent(this);
-        menuNode.setLocalPosition(new Vector3(1, 0.3f, 0));
-        menuNode.setLocalRotation(Quaternion.axisAngle(new Vector3(1, 0, 0), -90));
-        menuNode.setRenderable(menu.getNow(null));
+        menuNode.setLocalPosition(new Vector3(0.5f, 0.2f, 0));
+        menuNode.setLocalRotation(Quaternion.axisAngle(new Vector3(1, 0, 0), 0));
+        menuNode.setRenderable(menuCF.getNow(null));
     }
 
 }
