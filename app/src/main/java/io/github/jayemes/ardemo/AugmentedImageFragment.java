@@ -23,6 +23,8 @@ public class AugmentedImageFragment extends ArFragment {
     private static final String TAG = "AugmentedImageFragment";
     private static final String DEFAULT_IMAGE_NAME = "marker.png";
 
+    private HeatedTankODE tankODE;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -33,6 +35,8 @@ public class AugmentedImageFragment extends ArFragment {
         getPlaneDiscoveryController().hide();
         getPlaneDiscoveryController().setInstructionView(null);
         getArSceneView().getPlaneRenderer().setEnabled(false);
+
+        tankODE = new HeatedTankODE(0.07, 10, 10, 2000, 1, 0.1, 0.015);
 
         return view;
     }

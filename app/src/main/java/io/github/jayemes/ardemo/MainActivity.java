@@ -18,6 +18,8 @@ import java.util.Map;
 import static com.google.ar.core.TrackingState.STOPPED;
 import static com.google.ar.core.TrackingState.TRACKING;
 
+
+
 public class MainActivity extends AppCompatActivity {
 
     private ArFragment arFragment;
