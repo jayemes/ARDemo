@@ -1,16 +1,18 @@
 package io.github.jayemes.ardemo;
 
+import android.animation.ArgbEvaluator;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.widget.SeekBar;
 
 import com.google.ar.core.AugmentedImage;
 import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
-import com.google.ar.sceneform.rendering.Color;
 import com.google.ar.sceneform.rendering.Material;
 import com.google.ar.sceneform.rendering.MaterialFactory;
 import com.google.ar.sceneform.rendering.ModelRenderable;
@@ -26,8 +28,13 @@ class AugmentedImageNode extends AnchorNode {
     private static CompletableFuture<ViewRenderable> menuCF;
 
     private Node tankNode, waterNode;
+    private HeatedTankODE tankODE;
+    private Context context;
 
-    AugmentedImageNode(Context context) {
+    AugmentedImageNode(Context context, HeatedTankODE tankOD) {
+        this.tankODE = tankOD;
+        this.context = context;
+
         if (tankCF == null) {
             tankCF = ModelRenderable.builder()
                     .setSource(context, R.raw.tank)
@@ -48,9 +55,7 @@ class AugmentedImageNode extends AnchorNode {
         levelBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                if (waterNode != null) {
-                    waterNode.setLocalScale(new Vector3(.5f, i / 100f, .5f));
-                }
+                tankODE.setkValve(i / 50f);
             }
 
             @Override
@@ -67,14 +72,7 @@ class AugmentedImageNode extends AnchorNode {
         tempBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                Color newColor = new Color(i / 100f, .5f - i / 200f, .5f - i / 200f);
-
-                CompletableFuture<Material> materialCompletableFuture =
-                        MaterialFactory.makeOpaqueWithColor(context, newColor);
-
-                materialCompletableFuture.thenAccept(material -> {
-                    waterNode.getRenderable().setMaterial(material);
-                });
+                tankODE.setQDot(i * 200);
             }
 
             @Override
@@ -130,5 +128,44 @@ class AugmentedImageNode extends AnchorNode {
         menuNode.setLocalRotation(Quaternion.axisAngle(new Vector3(1, 0, 0), 0));
         menuNode.setRenderable(menuCF.getNow(null));
     }
+
+    @Override
+    public void onUpdate(FrameTime frameTime) {
+        super.onUpdate(frameTime);
+
+        if (waterNode != null) {
+            waterNode.setLocalScale(new Vector3(.5f, (float) (tankODE.getH() / 10f), .5f));
+
+            float temp = (float) tankODE.getTOut();
+
+            ArgbEvaluator evaluator = new ArgbEvaluator();
+            int newColor = interpolateColor(0x00ffff, 0xff0000, (temp - 10f) / 70f);
+
+            CompletableFuture<Material> materialCompletableFuture =
+                    MaterialFactory.makeOpaqueWithColor(context, new com.google.ar.sceneform.rendering.Color(newColor));
+
+            materialCompletableFuture.thenAccept(material -> {
+                waterNode.getRenderable().setMaterial(material);
+            });
+        }
+    }
+
+    private float interpolate(float a, float b, float proportion) {
+        return (a + ((b - a) * proportion));
+    }
+
+    /** Returns an interpoloated color, between <code>a</code> and <code>b</code> */
+    private int interpolateColor(int a, int b, float proportion) {
+        float[] hsva = new float[3];
+        float[] hsvb = new float[3];
+
+        Color.colorToHSV(a, hsva);
+        Color.colorToHSV(b, hsvb);
+        for (int i = 0; i < 3; i++) {
+            hsvb[i] = interpolate(hsva[i], hsvb[i], proportion);
+        }
+        return Color.HSVToColor(hsvb);
+    }
+
 
 }

@@ -7,6 +7,7 @@ import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
 
 public class HeatedTankODE implements FirstOrderDifferentialEquations {
+    public static final double SIMULATION_STEP = 0.2;
 
     private double FIn, TIn, QDot, TOut, h, aTank, aOut;
     private double cp = 4.184; // kJ/kg-K
@@ -40,18 +41,17 @@ public class HeatedTankODE implements FirstOrderDifferentialEquations {
     }
 
     public void run() {
-        FirstOrderIntegrator integrator = new ClassicalRungeKuttaIntegrator(1.0); // Set time step
+        FirstOrderIntegrator integrator = new ClassicalRungeKuttaIntegrator(SIMULATION_STEP / 2); // Set time step
 
         FirstOrderDifferentialEquations ODE = this;
 
         double[] vars0 = new double[]{TOut, h}; // initial state
         double[] vars1 = new double[2]; // array to save the result
 
-        integrator.integrate(ODE, 0.0, vars0, 1.0, vars1); // now TOut1 contains final state at time t=1.0
+        integrator.integrate(ODE, 0.0, vars0, SIMULATION_STEP, vars1); // now TOut1 contains final state at time t=1.0
 
         TOut = vars1[0];
         h = vars1[1];
-
     }
 
     public void setQDot(double QDot) {
