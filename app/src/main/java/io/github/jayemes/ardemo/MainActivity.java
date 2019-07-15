@@ -5,6 +5,7 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -52,10 +53,8 @@ public class MainActivity extends AppCompatActivity {
             if (counter % 100 == 50) {
                 Log.e("Tank Main", String.format("Temp: %s", tankODE.getTOut()));
             }
-
         }
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
 
         timer = new Timer();
         runButton.setOnClickListener(view -> timer.schedule(new ODETask(tankODE), 100, 100));
-
     }
 
     private void onUpdateFrame(FrameTime ft) {
@@ -103,11 +101,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, "Removed Node");
             } else {
                 Log.e(TAG, "Paused");
+                Toast.makeText(this, "Detected (Paused)", Toast.LENGTH_SHORT).show();
             }
-
         }
-
     }
-
 
 }

@@ -1,6 +1,5 @@
 package io.github.jayemes.ardemo;
 
-import android.animation.ArgbEvaluator;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
@@ -138,7 +137,6 @@ class AugmentedImageNode extends AnchorNode {
 
             float temp = (float) tankODE.getTOut();
 
-            ArgbEvaluator evaluator = new ArgbEvaluator();
             int newColor = interpolateColor(0x00ffff, 0xff0000, (temp - 10f) / 70f);
 
             CompletableFuture<Material> materialCompletableFuture =

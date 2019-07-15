@@ -66,7 +66,7 @@ public class AugmentedImageFragment extends ArFragment {
         }
 
         augmentedImageDatabase = new AugmentedImageDatabase(session);
-        augmentedImageDatabase.addImage(DEFAULT_IMAGE_NAME, augmentedImageBitmap);
+        augmentedImageDatabase.addImage(DEFAULT_IMAGE_NAME, augmentedImageBitmap, 0.2f);
 
         config.setAugmentedImageDatabase(augmentedImageDatabase);
         return true;
