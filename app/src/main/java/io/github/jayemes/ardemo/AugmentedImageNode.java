@@ -104,27 +104,27 @@ class AugmentedImageNode extends AnchorNode {
                     });
         }
 
-
         setAnchor(image.createAnchor(image.getCenterPose()));
 
         tankNode = new Node();
         tankNode.setParent(this);
-        tankNode.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
+        tankNode.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
         tankNode.setLocalPosition(new Vector3(0, 0, 0));
         tankNode.setLocalRotation(Quaternion.axisAngle(new Vector3(0, 1, 0), 180));
         tankNode.setRenderable(tankCF.getNow(null));
 
         waterNode = new Node();
         waterNode.setParent(this);
-        waterNode.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
+        waterNode.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
         waterNode.setLocalPosition(new Vector3(0, 0, 0));
         waterNode.setLocalRotation(Quaternion.axisAngle(new Vector3(0, 1, 0), 180));
         waterNode.setRenderable(waterCF.getNow(null));
 
         Node menuNode = new Node();
         menuNode.setParent(this);
-        menuNode.setLocalPosition(new Vector3(0.5f, 0.2f, 0));
-        menuNode.setLocalRotation(Quaternion.axisAngle(new Vector3(1, 0, 0), 0));
+        //menuNode.setLocalScale(new Vector3(0.5f, 0.5f, 1f));
+        menuNode.setLocalPosition(new Vector3(0.4f, 0.2f, 0));
+        //menuNode.setLocalRotation(Quaternion.axisAngle(new Vector3(1, 0, 0), 0));
         menuNode.setRenderable(menuCF.getNow(null));
     }
 
@@ -133,26 +133,32 @@ class AugmentedImageNode extends AnchorNode {
         super.onUpdate(frameTime);
 
         if (waterNode != null) {
-            waterNode.setLocalScale(new Vector3(.5f, (float) (tankODE.getH() / 10f), .5f));
+            waterNode.setLocalScale(new Vector3(.3f, (float) (tankODE.getH() / 12f), .3f));
 
             float temp = (float) tankODE.getTOut();
 
             int newColor = interpolateColor(0x00ffff, 0xff0000, (temp - 10f) / 70f);
 
-            CompletableFuture<Material> materialCompletableFuture =
-                    MaterialFactory.makeOpaqueWithColor(context, new com.google.ar.sceneform.rendering.Color(newColor));
+            if (waterNode.getRenderable() != null) {
+                CompletableFuture<Material> materialCompletableFuture =
+                        MaterialFactory.makeOpaqueWithColor(context,
+                                new com.google.ar.sceneform.rendering.Color(newColor));
 
-            materialCompletableFuture.thenAccept(material -> {
-                waterNode.getRenderable().setMaterial(material);
-            });
+                materialCompletableFuture.thenAccept(
+                        mat -> waterNode.getRenderable().setMaterial(mat));
+            }
+
         }
+
     }
 
     private float interpolate(float a, float b, float proportion) {
         return (a + ((b - a) * proportion));
     }
 
-    /** Returns an interpoloated color, between <code>a</code> and <code>b</code> */
+    /**
+     * Returns an interpoloated color, between <code>a</code> and <code>b</code>
+     */
     private int interpolateColor(int a, int b, float proportion) {
         float[] hsva = new float[3];
         float[] hsvb = new float[3];

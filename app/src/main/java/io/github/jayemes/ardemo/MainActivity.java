@@ -77,6 +77,13 @@ public class MainActivity extends AppCompatActivity {
         runButton.setOnClickListener(view -> timer.schedule(new ODETask(tankODE), 100, 100));
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        timer.purge();
+        timer.cancel();
+    }
+
     private void onUpdateFrame(FrameTime ft) {
         Frame frame = arFragment.getArSceneView().getArFrame();
 
