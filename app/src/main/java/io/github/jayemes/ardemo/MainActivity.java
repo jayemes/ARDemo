@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
         TextView versionTV = findViewById(R.id.versionTV);
 
-        String date = DateFormat.format("dd-MM hh:mm", BuildConfig.BUILD_TIME).toString();
+        String date = DateFormat.format("dd-MM HH:mm", BuildConfig.BUILD_TIME).toString();
         versionTV.setText(String.format("AR Demo %s", date));
 
         Button runButton = findViewById(R.id.run_button);

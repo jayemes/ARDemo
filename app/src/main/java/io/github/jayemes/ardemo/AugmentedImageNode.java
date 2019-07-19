@@ -10,6 +10,7 @@ import com.google.ar.core.AugmentedImage;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.Node;
+import com.google.ar.sceneform.SkeletonNode;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.Material;
@@ -23,7 +24,7 @@ class AugmentedImageNode extends AnchorNode {
 
     private static final String TAG = "AugmentedImageNode";
     private AugmentedImage image;
-    private static CompletableFuture<ModelRenderable> tankCF, waterCF;
+    private static CompletableFuture<ModelRenderable> tankCF, waterCF, assetsCF;
     private static CompletableFuture<ViewRenderable> menuCF;
 
     private Node tankNode, waterNode;
@@ -43,6 +44,12 @@ class AugmentedImageNode extends AnchorNode {
         if (waterCF == null) {
             waterCF = ModelRenderable.builder()
                     .setSource(context, R.raw.water)
+                    .build();
+        }
+
+        if (assetsCF == null) {
+            assetsCF = ModelRenderable.builder()
+                    .setSource(context, R.raw.bones)
                     .build();
         }
 
@@ -95,8 +102,8 @@ class AugmentedImageNode extends AnchorNode {
     void setImage(AugmentedImage image) {
         this.image = image;
 
-        if (!tankCF.isDone() || !menuCF.isDone() || !waterCF.isDone()) {
-            CompletableFuture.allOf(tankCF, menuCF, waterCF)
+        if (!tankCF.isDone() || !menuCF.isDone() || !waterCF.isDone() || !assetsCF.isDone()) {
+            CompletableFuture.allOf(tankCF, menuCF, waterCF, assetsCF)
                     .thenAccept(aVoid -> setImage(image))
                     .exceptionally(throwable -> {
                         Log.e(TAG, "Exception loading models", throwable);
@@ -126,6 +133,8 @@ class AugmentedImageNode extends AnchorNode {
         menuNode.setLocalPosition(new Vector3(0.4f, 0.2f, 0));
         //menuNode.setLocalRotation(Quaternion.axisAngle(new Vector3(1, 0, 0), 0));
         menuNode.setRenderable(menuCF.getNow(null));
+
+
     }
 
     @Override
