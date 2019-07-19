@@ -1,0 +1,61 @@
+{
+  animations: [
+    {
+      path: 'models/new_tank.fbx',
+    },
+  ],
+  materials: [
+    {
+      name: 'Tank',
+      parameters: [
+        {
+          baseColor: [
+            0.62745099999999998,
+            0.62745099999999998,
+            0.62745099999999998,
+            1,
+          ],
+        },
+        {
+          baseColorMap: null,
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+      'BoneIndices',
+      'BoneWeights',
+    ],
+    collision: {},
+    file: 'models/new_tank.fbx',
+    name: 'new_tank',
+    recenter: false,
+  },
+  version: '0.54:2',
+}
