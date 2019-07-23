@@ -68,8 +68,9 @@ class AugmentedImageNode extends AnchorNode {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 tankODE.setkValve(i / 50f);
-                if (!handleAnimator.isRunning())
-                handleAnimator.start();
+                if (!handleAnimator.isRunning()) {
+                    handleAnimator.start();
+                }
             }
 
             @Override
@@ -123,27 +124,31 @@ class AugmentedImageNode extends AnchorNode {
 
         Vector3 scaleVector = Vector3.one().scaled(OBJECTS_SCALE);
 
+        Node baseNode = new Node();
+        baseNode.setParent(this);
+        baseNode.setLocalPosition(Vector3.zero());
+
         tankNode = new Node();
-        tankNode.setParent(this);
-        tankNode.setLocalScale(scaleVector);
+        tankNode.setParent(baseNode);
+        //tankNode.setLocalScale(scaleVector);
         tankNode.setLocalPosition(Vector3.zero());
         tankNode.setRenderable(tankCF.getNow(null));
 
         waterNode = new Node();
-        waterNode.setParent(this);
-        waterNode.setLocalScale(scaleVector);
-        waterNode.setLocalPosition(Vector3.zero());
+        waterNode.setParent(baseNode);
+        //waterNode.setLocalScale(scaleVector);
+        waterNode.setLocalPosition(new Vector3(0,0.02f,0));
         waterNode.setRenderable(waterCF.getNow(null));
 
         handleNode = new Node();
-        handleNode.setParent(this);
-        handleNode.setLocalScale(scaleVector);
-        handleNode.setLocalPosition(Vector3.zero());
+        handleNode.setParent(baseNode);
+        //handleNode.setLocalScale(scaleVector);
+        handleNode.setLocalPosition(new Vector3(-0.1500f, 0.0494f, -0.0290f));
         handleNode.setRenderable(handleCF.getNow(null));
 
         Node menuNode = new Node();
-        menuNode.setParent(this);
-        menuNode.setLocalPosition(new Vector3(0.4f, 0.2f, 0));
+        menuNode.setParent(baseNode);
+        menuNode.setLocalPosition(new Vector3(0.3f, 0.2f, 0));
         menuNode.setLocalRotation(Quaternion.axisAngle(Vector3.up(), 180));
         menuNode.setRenderable(menuCF.getNow(null));
 
@@ -155,9 +160,9 @@ class AugmentedImageNode extends AnchorNode {
 
         if (waterNode != null) {
             waterNode.setLocalScale(new Vector3(
-                    OBJECTS_SCALE,
-                    (float) (tankODE.getH() / 3f * OBJECTS_SCALE),
-                    OBJECTS_SCALE));
+                    1,
+                    (float) (tankODE.getH() / 5f * 1),
+                    1));
 
             float temp = (float) tankODE.getTOut();
 

@@ -36,18 +36,6 @@ dependencies {
 }
 
 
-sceneform.asset('models/water.fbx',
-        'default',
-        'models/water.sfa',
-        'src/main/res/raw/water')
-
-sceneform.asset('models/tank.fbx',
-        'default',
-        'models/tank.sfa',
-        'src/main/res/raw/tank')
-
-
-
 sceneform.asset('models/new_handle.fbx',
         'default',
         'models/new_handle.sfa',
