@@ -58,7 +58,7 @@ class AugmentedImageNode extends AnchorNode {
 
         View menuView = View.inflate(context, R.layout.floating_menu, null);
 
-        handleAnimator = ValueAnimator.ofInt(1, 360);
+        handleAnimator = ValueAnimator.ofInt(1, 90);
         handleAnimator.setDuration(1000);
 
         SeekBar levelBar = menuView.findViewById(R.id.levelSeekBar);
