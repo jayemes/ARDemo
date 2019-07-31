@@ -7,30 +7,43 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/run_button"
+        android:id="@+id/ar_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:text="Run"
-        app:layout_constraintBottom_toBottomOf="@+id/frameLayout"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="39dp"
+        android:layout_marginEnd="8dp"
+        android:text="Con AR"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/frameLayout" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
-    <FrameLayout
-        android:id="@+id/frameLayout"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
+    <Button
+        android:id="@+id/no_ar_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="8dp"
+        android:text="Sin AR"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ar_button" />
 
-        <fragment
-            android:id="@+id/ux_fragment"
-            android:name="io.github.jayemes.ardemo.AugmentedImageFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </FrameLayout>
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="57dp"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="@font/audiowide"
+        android:text="AR Demo"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+        android:textColor="#3F51B5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/versionTV"
@@ -39,7 +52,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        app:layout_constraintStart_toStartOf="@+id/frameLayout"
-        app:layout_constraintTop_toTopOf="@+id/frameLayout"
-        tools:text="AR Demo vX.X"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="AR Demo vX.X" />
 </androidx.constraintlayout.widget.ConstraintLayout>

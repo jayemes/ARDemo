@@ -1,36 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="120dp"
-    android:layout_height="120dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:background="@drawable/rounded_background"
-    android:orientation="vertical"
-    android:padding="5dp">
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="2dp"
+        android:paddingTop="4dp"
         android:text="Valve K"
         android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="#000000"
+        android:textSize="12sp" />
 
     <SeekBar
         android:id="@+id/levelSeekBar"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:max="100" />
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:progress="50" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="2dp"
         android:text="Heater Q"
         android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="#000000"
+        android:textSize="12sp" />
 
     <SeekBar
         android:id="@+id/tempSeekBar"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:max="100" />
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp"
+        android:max="100"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="4dp"
+        android:progress="50" />
 </LinearLayout>
