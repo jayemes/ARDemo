@@ -18,6 +18,7 @@ import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.Material;
 import com.google.ar.sceneform.rendering.MaterialFactory;
 import com.google.ar.sceneform.rendering.ModelRenderable;
+import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 
 import java.util.concurrent.CompletableFuture;
@@ -32,31 +33,13 @@ class AugmentedImageNode extends AnchorNode {
     private static CompletableFuture<ViewRenderable> menuCF;
 
     private ValueAnimator handleAnimator;
-    private Node tankNode, waterNode, handleNode;
+    private Node tankNode, waterNode, handleNode, baseNode, menuNode;
     private HeatedTankODE tankODE;
     private Context context;
 
     AugmentedImageNode(Context context, HeatedTankODE tankOD) {
         this.tankODE = tankOD;
         this.context = context;
-
-        if (tankCF == null) {
-            tankCF = ModelRenderable.builder()
-                    .setSource(context, R.raw.new_tank)
-                    .build();
-        }
-
-        if (waterCF == null) {
-            waterCF = ModelRenderable.builder()
-                    .setSource(context, R.raw.new_water)
-                    .build();
-        }
-
-        if (handleCF == null) {
-            handleCF = ModelRenderable.builder()
-                    .setSource(context, R.raw.new_handle)
-                    .build();
-        }
 
         View menuView = View.inflate(context, R.layout.floating_menu, null);
 
@@ -66,48 +49,25 @@ class AugmentedImageNode extends AnchorNode {
         SeekBar levelBar = menuView.findViewById(R.id.levelSeekBar);
         SeekBar tempBar = menuView.findViewById(R.id.tempSeekBar);
 
-        levelBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                tankODE.setkValve(i / 50f);
-                if (!handleAnimator.isRunning()) {
-                    handleAnimator.start();
-                }
-            }
+        levelBar.setOnSeekBarChangeListener(new LevelBarChangeListener());
+        tempBar.setOnSeekBarChangeListener(new TempBarChangeListener());
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
 
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        tempBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                tankODE.setQDot(i * 200);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        if (menuCF == null) {
+        if (tankCF == null) {
+            tankCF = ModelRenderable.builder()
+                    .setSource(context, R.raw.new_tank)
+                    .build();
+            waterCF = ModelRenderable.builder()
+                    .setSource(context, R.raw.new_water)
+                    .build();
+            handleCF = ModelRenderable.builder()
+                    .setSource(context, R.raw.new_handle)
+                    .build();
             menuCF = ViewRenderable.builder()
                     .setView(context, menuView)
                     .build();
         }
+
     }
 
     void setImage(@Nullable AugmentedImage image) {
@@ -115,7 +75,7 @@ class AugmentedImageNode extends AnchorNode {
 
         if (!tankCF.isDone() || !menuCF.isDone() || !waterCF.isDone() || !handleCF.isDone()) {
             CompletableFuture.allOf(tankCF, menuCF, waterCF, handleCF)
-                    .thenAccept(aVoid -> setImage(image))
+                    .thenAccept((Void v) -> setImage(image))
                     .exceptionally(throwable -> {
                         Log.e(TAG, "Exception loading models", throwable);
                         return null;
@@ -128,7 +88,10 @@ class AugmentedImageNode extends AnchorNode {
 
         Vector3 scaleVector = Vector3.one().scaled(OBJECTS_SCALE);
 
-        Node baseNode = new Node();
+        Log.e("setImage()", "Dentro de setImage");
+
+        baseNode = new Node();
+        baseNode.setName("BASE");
         baseNode.setParent(this);
         baseNode.setLocalPosition(Vector3.zero());
 
@@ -139,7 +102,7 @@ class AugmentedImageNode extends AnchorNode {
 
         waterNode = new Node();
         waterNode.setParent(baseNode);
-        waterNode.setLocalPosition(new Vector3(0,0.02f,0));
+        waterNode.setLocalPosition(new Vector3(0, 0.02f, 0));
         waterNode.setRenderable(waterCF.getNow(null));
 
         handleNode = new Node();
@@ -147,7 +110,7 @@ class AugmentedImageNode extends AnchorNode {
         handleNode.setLocalPosition(new Vector3(-0.1500f, 0.0494f, -0.0290f));
         handleNode.setRenderable(handleCF.getNow(null));
 
-        Node menuNode = new Node();
+        menuNode = new Node();
         menuNode.setParent(baseNode);
         menuNode.setLocalPosition(new Vector3(0.3f, 0.2f, 0));
         menuNode.setLocalRotation(Quaternion.axisAngle(Vector3.up(), 180));
@@ -190,13 +153,11 @@ class AugmentedImageNode extends AnchorNode {
 
     }
 
+
     private float interpolate(float a, float b, float proportion) {
         return (a + ((b - a) * proportion));
     }
 
-    /**
-     * Returns an interpoloated color, between <code>a</code> and <code>b</code>
-     */
     private int interpolateColor(int a, int b, float proportion) {
         float[] hsva = new float[3];
         float[] hsvb = new float[3];
@@ -209,5 +170,40 @@ class AugmentedImageNode extends AnchorNode {
         return Color.HSVToColor(hsvb);
     }
 
+    private class LevelBarChangeListener implements SeekBar.OnSeekBarChangeListener {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+            tankODE.setkValve(i / 50f);
+            if (!handleAnimator.isRunning()) {
+                handleAnimator.start();
+            }
+        }
 
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    }
+
+    private class TempBarChangeListener implements SeekBar.OnSeekBarChangeListener {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+            tankODE.setQDot(i * 200);
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    }
 }

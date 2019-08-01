@@ -2,6 +2,7 @@ package io.github.jayemes.ardemo;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -28,7 +29,6 @@ public class NoArActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_no_ar);
 
-
         sceneView = findViewById(R.id.scene_view);
 
         scene = sceneView.getScene();
@@ -47,10 +47,7 @@ public class NoArActivity extends AppCompatActivity {
         camera.setLocalPosition(camVector);
         camera.setLocalRotation(camRotation);
 
-
-
         Context context = this;
-
 
         augNode = new AugmentedImageNode(context, tankODE);
 
@@ -61,8 +58,10 @@ public class NoArActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        Log.e("Pause", "Pause");
         super.onPause();
         sceneView.pause();
+//        augNode.menuCF = null;
     }
 
     @Override
@@ -80,6 +79,6 @@ public class NoArActivity extends AppCompatActivity {
         super.onStop();
         timer.purge();
         timer.cancel();
-        augNode = null;
+
     }
 }

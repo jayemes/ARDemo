@@ -116,13 +116,6 @@ public class ArActivity extends AppCompatActivity {
         public void run() {
             counter++;
             tankODE.run();
-
-            if (counter % 100 == 0) {
-                Log.e("Tank Main", String.format("Level: %s", tankODE.getH()));
-            }
-            if (counter % 100 == 50) {
-                Log.e("Tank Main", String.format("Temp: %s", tankODE.getTOut()));
-            }
         }
     }
 }
