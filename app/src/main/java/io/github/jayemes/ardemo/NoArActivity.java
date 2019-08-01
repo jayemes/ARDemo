@@ -61,7 +61,7 @@ public class NoArActivity extends AppCompatActivity {
         Log.e("Pause", "Pause");
         super.onPause();
         sceneView.pause();
-//        augNode.menuCF = null;
+
     }
 
     @Override
@@ -79,6 +79,11 @@ public class NoArActivity extends AppCompatActivity {
         super.onStop();
         timer.purge();
         timer.cancel();
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        augNode.menuCF = null;
     }
 }

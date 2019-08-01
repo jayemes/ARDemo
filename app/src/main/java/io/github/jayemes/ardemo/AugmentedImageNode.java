@@ -18,7 +18,6 @@ import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.Material;
 import com.google.ar.sceneform.rendering.MaterialFactory;
 import com.google.ar.sceneform.rendering.ModelRenderable;
-import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 
 import java.util.concurrent.CompletableFuture;
@@ -30,7 +29,7 @@ class AugmentedImageNode extends AnchorNode {
 
     private AugmentedImage image;
     private static CompletableFuture<ModelRenderable> tankCF, waterCF, handleCF;
-    private static CompletableFuture<ViewRenderable> menuCF;
+    protected static CompletableFuture<ViewRenderable> menuCF;
 
     private ValueAnimator handleAnimator;
     private Node tankNode, waterNode, handleNode, baseNode, menuNode;
@@ -66,6 +65,10 @@ class AugmentedImageNode extends AnchorNode {
             menuCF = ViewRenderable.builder()
                     .setView(context, menuView)
                     .build();
+        } else {
+            menuCF = ViewRenderable.builder()
+                    .setView(context, menuView)
+                    .build();
         }
 
     }
@@ -89,6 +92,10 @@ class AugmentedImageNode extends AnchorNode {
         Vector3 scaleVector = Vector3.one().scaled(OBJECTS_SCALE);
 
         Log.e("setImage()", "Dentro de setImage");
+
+        for (Node node : getChildren()) {
+            removeChild(node);
+        }
 
         baseNode = new Node();
         baseNode.setName("BASE");
